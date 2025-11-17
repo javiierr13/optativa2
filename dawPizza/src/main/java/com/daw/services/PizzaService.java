@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import com.daw.persistence.entities.Pizza;
 import com.daw.persistence.repositories.PizzaRepository;
-import com.daw.services.exceptions.PizzaException;
 import com.daw.services.exceptions.PizzaNotFoundException;
 
 @Service
@@ -16,50 +15,46 @@ public class PizzaService {
 	@Autowired
 	private PizzaRepository pizzaRepository;
 
-	// findAll
 	public List<Pizza> findAll() {
-		return pizzaRepository.findAll();
+		return this.pizzaRepository.findAll();
 	}
 
-	// findById
-	public Pizza findById(int id) {
-		if (!pizzaRepository.existsById(id)) {
-			throw new PizzaNotFoundException("La pizza con ID " + id + " no existe");
+	public Pizza findById(int idPizza) {
+		if (!this.pizzaRepository.existsById(idPizza)) {
+			throw new PizzaNotFoundException("El ID indicado no existe. ");
 		}
-		return pizzaRepository.findById(id).get();
+
+		return this.pizzaRepository.findById(idPizza).get();
 	}
 
-	// create
 	public Pizza create(Pizza pizza) {
-		if (pizza.getNombre() == null || pizza.getNombre().isBlank()) {
-			throw new PizzaException("El nombre de la pizza es obligatorio");
-		}
-		if (pizza.getPrecio() <= 0) {
-			throw new PizzaException("El precio debe ser mayor que 0");
-		}
-		pizza.setDisponible(true);
-		return pizzaRepository.save(pizza);
+		pizza.setId(0);
+
+		return this.pizzaRepository.save(pizza);
 	}
 
-	// update
-	public Pizza update(Pizza pizza, int id) {
-		Pizza pizzaExistente = findById(id);
-
-		pizzaExistente.setNombre(pizza.getNombre());
-		pizzaExistente.setDescripcion(pizza.getDescripcion());
-		pizzaExistente.setPrecio(pizza.getPrecio());
-		pizzaExistente.setVegetariana(pizza.isVegetariana());
-		pizzaExistente.setVegana(pizza.isVegana());
-		pizzaExistente.setDisponible(pizza.isDisponible());
-
-		return pizzaRepository.save(pizzaExistente);
-	}
-
-	// delete
-	public void delete(int id) {
-		if (!pizzaRepository.existsById(id)) {
-			throw new PizzaNotFoundException("La pizza con ID " + id + " no existe");
+	public Pizza update(int idPizza, Pizza pizza) {
+		if (idPizza != pizza.getId()) {
+			throw new PizzaNotFoundException("El ID del path y del body no coinciden. ");
 		}
-		pizzaRepository.deleteById(id);
+
+		Pizza pizzaBD = this.findById(idPizza);
+		pizzaBD.setDescripcion(pizza.getDescripcion());
+		pizzaBD.setDisponible(pizza.isDisponible());
+		pizzaBD.setNombre(pizza.getNombre());
+		pizzaBD.setPrecio(pizza.getPrecio());
+		pizzaBD.setVegana(pizza.isVegana());
+		pizzaBD.setVegetatiana(pizza.isVegetatiana());
+
+		return this.pizzaRepository.save(pizza);
 	}
+
+	public void deleteById(int idPizza) {
+		if (!this.pizzaRepository.existsById(idPizza)) {
+			throw new PizzaNotFoundException("El ID indicado no existe. ");
+		}
+
+		this.pizzaRepository.deleteById(idPizza);
+	}
+
 }

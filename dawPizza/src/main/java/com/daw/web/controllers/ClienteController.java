@@ -72,4 +72,22 @@ public class ClienteController {
 		}
 	}
 
+	@PutMapping("/{idCliente}/direccion")
+	public ResponseEntity<?> actualizarDireccion(@PathVariable int idCliente, @RequestBody String direccion) {
+		try {
+			return ResponseEntity.ok(this.clienteService.actualizarDireccion(idCliente, direccion));
+		} catch (ClienteNotFoundException ex) {
+			return ResponseEntity.status(404).body(ex.getMessage());
+		}
+	}
+
+	@GetMapping("/telefono/{telefono}")
+	public ResponseEntity<?> buscarPorTelefono(@PathVariable String telefono) {
+		try {
+			return ResponseEntity.ok(this.clienteService.findByTelefono(telefono));
+		} catch (ClienteNotFoundException ex) {
+			return ResponseEntity.status(404).body(ex.getMessage());
+		}
+	}
+
 }

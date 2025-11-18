@@ -44,9 +44,9 @@ public class PizzaService {
 		pizzaBD.setNombre(pizza.getNombre());
 		pizzaBD.setPrecio(pizza.getPrecio());
 		pizzaBD.setVegana(pizza.isVegana());
-		pizzaBD.setVegetatiana(pizza.isVegetatiana());
+		pizzaBD.setVegetariana(pizza.isVegetariana());
 
-		return this.pizzaRepository.save(pizza);
+		return this.pizzaRepository.save(pizzaBD);
 	}
 
 	public void deleteById(int idPizza) {
@@ -56,5 +56,34 @@ public class PizzaService {
 
 		this.pizzaRepository.deleteById(idPizza);
 	}
+
+	public List<Pizza> findDisponiblesOrdenPrecio() {
+		return this.pizzaRepository.findByDisponibleTrueOrderByPrecioAsc();
+	}
+
+	public List<Pizza> findByNombreDisponible(String nombre) {
+		return this.pizzaRepository.findByNombreContainingIgnoreCaseAndDisponibleTrue(nombre);
+	}
+
+	public List<Pizza> findConIngrediente(String ingrediente) {
+		return this.pizzaRepository.findByDescripcionContainingIgnoreCase(ingrediente);
+	}
+
+	public List<Pizza> findSinIngrediente(String ingrediente) {
+		return this.pizzaRepository.findByDescripcionNotContainingIgnoreCase(ingrediente);
+	}
+
+	public Pizza actualizarPrecio(int idPizza, double precio) {
+		Pizza pizzaBD = this.findById(idPizza);
+		pizzaBD.setPrecio(precio);
+		return this.pizzaRepository.save(pizzaBD);
+	}
+	
+	public Pizza cambiarDisponibilidad(int idPizza, boolean disponible) {
+	    Pizza pizzaBD = this.findById(idPizza);
+	    pizzaBD.setDisponible(disponible);
+	    return this.pizzaRepository.save(pizzaBD);
+	}
+
 
 }

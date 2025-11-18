@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.daw.persistence.entities.Pedido;
 import com.daw.persistence.repositories.PedidoRepository;
-import com.daw.services.exceptions.ClienteNotFoundException;
+import com.daw.services.exceptions.PedidoNotFoundException;
 
 @Service
 public class PedidoService {
@@ -20,8 +20,8 @@ public class PedidoService {
 	}
 
 	public Pedido findById(int idPedido) {
-		if (this.pedidoRepository.existsById(idPedido)) {
-			throw new ClienteNotFoundException("El ID indicado no existe. ");
+		if (!this.pedidoRepository.existsById(idPedido)) {
+			throw new PedidoNotFoundException("El ID indicado no existe.");
 		}
 
 		return this.pedidoRepository.findById(idPedido).get();
@@ -29,7 +29,6 @@ public class PedidoService {
 
 	public Pedido create(Pedido pedido) {
 		pedido.setId(0);
-
 		return this.pedidoRepository.save(pedido);
 	}
 
@@ -41,15 +40,21 @@ public class PedidoService {
 		pedidoBD.setMetodo(pedido.getMetodo());
 		pedidoBD.setNotas(pedido.getNotas());
 
-		return this.pedidoRepository.save(pedido);
+		return this.pedidoRepository.save(pedidoBD);
 	}
 
 	public void deleteById(int idPedido) {
 		if (!this.pedidoRepository.existsById(idPedido)) {
-			throw new ClienteNotFoundException("El ID indicado no existe. ");
+			throw new PedidoNotFoundException("El ID indicado no existe.");
 		}
 
 		this.pedidoRepository.deleteById(idPedido);
+	}
+
+	public Pedido actualizarNotas(int idPedido, String notas) {
+		Pedido pedidoBD = this.findById(idPedido);
+		pedidoBD.setNotas(notas);
+		return this.pedidoRepository.save(pedidoBD);
 	}
 
 }

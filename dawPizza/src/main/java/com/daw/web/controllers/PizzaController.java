@@ -71,4 +71,42 @@ public class PizzaController {
 		}
 	}
 
+	@GetMapping("/disponibles")
+	public ResponseEntity<List<Pizza>> disponiblesOrdenPrecio() {
+		return ResponseEntity.ok(this.pizzaService.findDisponiblesOrdenPrecio());
+	}
+
+	@GetMapping("/buscar/{nombre}")
+	public ResponseEntity<List<Pizza>> buscarNombre(@PathVariable String nombre) {
+		return ResponseEntity.ok(this.pizzaService.findByNombreDisponible(nombre));
+	}
+
+	@GetMapping("/ingrediente/{ingrediente}")
+	public ResponseEntity<List<Pizza>> conIngrediente(@PathVariable String ingrediente) {
+		return ResponseEntity.ok(this.pizzaService.findConIngrediente(ingrediente));
+	}
+
+	@GetMapping("/sinIngrediente/{ingrediente}")
+	public ResponseEntity<List<Pizza>> sinIngrediente(@PathVariable String ingrediente) {
+		return ResponseEntity.ok(this.pizzaService.findSinIngrediente(ingrediente));
+	}
+
+	@PutMapping("/{idPizza}/precio/{precio}")
+	public ResponseEntity<?> actualizarPrecio(@PathVariable int idPizza, @PathVariable double precio) {
+		try {
+			return ResponseEntity.ok(this.pizzaService.actualizarPrecio(idPizza, precio));
+		} catch (PizzaNotFoundException ex) {
+			return ResponseEntity.status(404).body(ex.getMessage());
+		}
+	}
+
+	@PutMapping("/{idPizza}/disponible/{estado}")
+	public ResponseEntity<?> cambiarDisponibilidad(@PathVariable int idPizza, @PathVariable boolean estado) {
+		try {
+			return ResponseEntity.ok(this.pizzaService.cambiarDisponibilidad(idPizza, estado));
+		} catch (PizzaNotFoundException ex) {
+			return ResponseEntity.status(404).body(ex.getMessage());
+		}
+	}
+
 }

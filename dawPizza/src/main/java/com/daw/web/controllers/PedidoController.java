@@ -71,4 +71,13 @@ public class PedidoController {
 		}
 	}
 
+	@PutMapping("/{idPedido}/notas")
+	public ResponseEntity<?> actualizarNotas(@PathVariable int idPedido, @RequestBody String notas) {
+		try {
+			return ResponseEntity.ok(this.pedidoService.actualizarNotas(idPedido, notas));
+		} catch (PedidoNotFoundException ex) {
+			return ResponseEntity.status(404).body(ex.getMessage());
+		}
+	}
+
 }
